@@ -1,48 +1,44 @@
 import random
-import statistics
 
 
-def generate_password(pw_length):
+def generate_password(lengths):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
     passwords = []
 
-    for length in pw_length:
-        password = "".join(random.choices(alphabet, k=length))
-        password = replace_with_number(password)
-        password = replace_with_uppercase_letter(password)
+    # Iterate over each length in the input list and generate a password with that length
+    for length in lengths:
+
+        # Generate a random password with the specified length
+        password = "".join(random.choices(alphabet, k=int(length)))
+        num_of_indices_for_numbers = random.randint(1, len(lengths))
+        num_of_indices_for_uppercase = random.randint(1, len(lengths))
+
+        # Choose the indices to replace with numbers and uppercase letters
+        replace_indices_for_numbers = random.sample(range(int(length)), num_of_indices_for_numbers)
+        replace_indices_for_uppercase = random.sample(range(int(length) // 2, int(length)), num_of_indices_for_uppercase)
+
+        # Replace the chosen indices with numbers and uppercase letters
+        for index in replace_indices_for_numbers:
+            password = password[:index] + str(random.randrange(10)) + password[index + 1:]
+        for index in replace_indices_for_uppercase:
+            password = password[:index] + password[index].upper() + password[index + 1:]
+
         passwords.append(password)
 
     return passwords
 
 
-def replace_with_number(pword):
-    replace_indices = random.sample(range(len(pword)), random.randrange(1, 3))
-    for index in replace_indices:
-        pword = pword[:index] + str(random.randrange(10)) + pword[index + 1:]
-
-    return pword
-
-
-def replace_with_uppercase_letter(pword):
-    replace_indices = random.sample(range(len(pword) // 2, len(pword)), random.randrange(1, 3))
-    for index in replace_indices:
-        pword = pword[:index] + pword[index].upper() + pword[index + 1:]
-
-    return pword
-
-
 def main():
-    num_values = int(input("How many values do you want to enter? "))
-    print(f"Enter {num_values} values:")
-
-    values = []
+    # Get the number of passwords to generate from the user
+    num_values = int(input("How many passwords do you want to generate? "))
+    lengths = []
     for i in range(num_values):
-        value = float(input(f"Value #{i + 1}: "))
-        values.append(value)
+        length = int(input(f"Enter length of password #{i + 1}: "))
+        lengths.append(length)
 
-    average = statistics.mean(values)
-
-    print(f"The average of the entered values is: {average}")
+    # Generate the passwords and print them
+    passwords = generate_password(lengths)
+    print(f"Generated passwords: {passwords}")
 
 
 if __name__ == "__main__":
